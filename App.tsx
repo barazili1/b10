@@ -4,14 +4,15 @@ import SplashScreen from './components/SplashScreen';
 import PlatformSelection from './components/PlatformSelection';
 import { AppleGame } from './components/AppleGame';
 import SettingsView from './components/SettingsView';
+import GameSelection from './components/GameSelection';
+import CrashGame from './components/CrashGame';
 import ParticleBackground from './components/ParticleBackground';
-import { ViewState, Platform, AccessKey } from './types';
+import { ViewState, Platform, AccessKey, SelectedGame } from './types';
 import { translations, Language } from './utils/translations';
 import { audioManager } from './utils/audioManager';
 
 const App: React.FC = () => {
   const [view, setView] = useState<ViewState>('splash');
-  const [activeTab, setActiveTab] = useState<'info' | 'conditions' | 'platform'>('platform');
   const [lang, setLang] = useState<Language>('ar');
   const [userId, setUserId] = useState<string>('');
   const [selectedPlatform, setSelectedPlatform] = useState<Platform>('linebet_v1');
@@ -49,11 +50,6 @@ const App: React.FC = () => {
     }
   }, [selectedPlatform]);
 
-  const PLATFORM_IMAGES: Record<Platform, string> = {
-    linebet_v1: 'https://www.image2url.com/r2/default/images/1776200504700-76a44e57-f905-48c8-b91c-bd0939ae4633.jpeg',
-    linebet_v2: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQg6-yMiToAplqRqnBnaYACm49Od_26EabD95SDPxqLgg&s=10'
-  };
-
   useEffect(() => {
     const initAudio = () => {
         audioManager.resume();
@@ -65,30 +61,36 @@ const App: React.FC = () => {
 
   const handleSplashComplete = () => {
     setView('platform_selection');
-    setActiveTab('platform');
   };
 
   const handlePlatformSelect = (p: Platform) => {
     setSelectedPlatform(p);
     setView('settings');
-    setActiveTab('conditions');
   };
 
   const handleConditionsSubmit = (id: string) => {
     setUserId(id);
     setAccessKeyData({ key: id, expiresAt: Date.now() + 86400000 });
-    setView('info');
-    setActiveTab('info');
+    setView('game_selection');
+  };
+
+  const handleSelectGame = (game: SelectedGame) => {
+    audioManager.playClick();
+    if (game === 'apple') {
+      setView('apple_game');
+    } else {
+      setView('crash_game');
+    }
   };
 
   const handleBack = () => {
     audioManager.playClick();
-    if (view === 'settings') {
+    if (view === 'apple_game' || view === 'crash_game' || view === 'info') {
+      setView('game_selection');
+    } else if (view === 'game_selection') {
+      setView('settings');
+    } else if (view === 'settings') {
       setView('platform_selection');
-      setActiveTab('platform');
-    } else if (view === 'info') {
-      setView('platform_selection');
-      setActiveTab('platform');
     }
   };
   
@@ -96,25 +98,14 @@ const App: React.FC = () => {
       audioManager.playClick();
       setLang(l);
       setIsLangMenuOpen(false);
-  }
+  };
 
   const renderContent = () => {
-    if (view === 'platform_selection') {
-      return <PlatformSelection onSelect={handlePlatformSelect} t={t} />;
-    }
+    switch (view) {
+      case 'platform_selection':
+        return <PlatformSelection onSelect={handlePlatformSelect} t={t} />;
 
-    switch (activeTab) {
-      case 'info':
-        return (
-          <AppleGame 
-            onBack={handleBack} 
-            accessKeyData={accessKeyData} 
-            language={lang} 
-            onLanguageChange={toggleLanguage} 
-            platform={selectedPlatform} 
-          />
-        );
-      case 'conditions':
+      case 'settings':
         return (
           <SettingsView 
             onComplete={handleConditionsSubmit} 
@@ -124,6 +115,30 @@ const App: React.FC = () => {
             platform={selectedPlatform} 
           />
         );
+
+      case 'game_selection':
+        return (
+          <GameSelection 
+            onSelectGame={handleSelectGame}
+            onBack={handleBack}
+            userId={userId}
+            platform={selectedPlatform}
+            t={t}
+          />
+        );
+
+      case 'crash_game':
+        return (
+          <CrashGame 
+            onBack={handleBack}
+            userId={userId}
+            platform={selectedPlatform}
+            t={t}
+          />
+        );
+
+      case 'apple_game':
+      case 'info':
       default:
         return (
           <AppleGame 

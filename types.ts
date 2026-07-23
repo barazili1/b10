@@ -1,5 +1,7 @@
 
-export type ViewState = 'splash' | 'platform_selection' | 'info' | 'settings';
+export type ViewState = 'splash' | 'platform_selection' | 'settings' | 'game_selection' | 'apple_game' | 'crash_game' | 'info';
+
+export type SelectedGame = 'apple' | 'crash';
 
 export type Platform = 'linebet_v1' | 'linebet_v2';
 
