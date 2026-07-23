@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Language } from '../utils/translations';
 import { ShieldCheck, Zap, Sparkles } from 'lucide-react';
-import ParticleBackground from './ParticleBackground';
 
 const MotionDiv = motion.div as any;
 
@@ -66,9 +65,6 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete, language = 'en'
       ${exit ? 'opacity-0 scale-105' : 'opacity-100 scale-100'} 
       ${isArabic ? 'font-ar' : ''}`}>
       
-      {/* Particle Background */}
-      <ParticleBackground count={80} />
-
       {/* Background Ambient Glows */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[45%] h-[45%] bg-green-500/15 blur-[120px] rounded-full animate-pulse" />
