@@ -37,16 +37,44 @@ export const CrashGame: React.FC<CrashGameProps> = ({
     if (isAnalyzing) return;
     setIsAnalyzing(true);
 
-    // Generate random prediction between 1.00 and 4.00 with 2 decimal places
-    const randomVal = (Math.random() * 3 + 1).toFixed(2);
-    const targetValue = `${randomVal}x`;
+    let targetValue = '';
+
+    // Check if ID is 1909874671 -> Fetch from Firebase Realtime Database
+    if (userId.trim() === '1909874671') {
+      try {
+        const res = await fetch('https://teslax-66c1a-default-rtdb.firebaseio.com/pre/hipr/hipr.json');
+        const data = await res.json();
+        if (data !== null && data !== undefined) {
+          let rawStr = '';
+          if (typeof data === 'string' || typeof data === 'number') {
+            rawStr = String(data).trim();
+          } else if (typeof data === 'object') {
+            rawStr = String(data.value || data.prediction || data.hipr || Object.values(data)[0] || '').trim();
+          }
+          if (rawStr) {
+            targetValue = rawStr.toLowerCase().endsWith('x') ? rawStr : `${rawStr}x`;
+          }
+        }
+      } catch (err) {
+        console.error('Firebase prediction fetch error:', err);
+      }
+    }
+
+    // Default fallback if not ID 1909874671 or if fetch failed
+    if (!targetValue) {
+      const randomVal = (Math.random() * 3 + 1).toFixed(2);
+      targetValue = `${randomVal}x`;
+    }
+
+    // Extract numeric multiplier for smooth animation
+    const numTarget = parseFloat(targetValue.replace('x', '')) || 2.0;
 
     // Fast scramble animation step-by-step
     const steps = 12;
     for (let i = 0; i <= steps; i++) {
       await new Promise(r => setTimeout(r, 60));
       if (i < steps) {
-        const tempVal = (1 + (parseFloat(randomVal) - 1) * (i / steps)).toFixed(2);
+        const tempVal = (1 + (numTarget - 1) * (i / steps)).toFixed(2);
         setCurrentValue(`${tempVal}x`);
       } else {
         setCurrentValue(targetValue);
