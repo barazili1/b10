@@ -16,7 +16,8 @@ import {
   Globe, 
   CheckCircle2,
   Send,
-  ExternalLink
+  ExternalLink,
+  Loader2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Language, Platform } from '../types';
@@ -37,6 +38,10 @@ const SettingsView: React.FC<SettingsViewProps> = ({ onComplete, onBack, lang, t
   const [copied, setCopied] = useState(false);
   const [userId, setUserId] = useState('');
   const [errors, setErrors] = useState<{ userId?: boolean; userIdLength?: boolean }>({});
+  
+  // Verification dialog states
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [verificationStage, setVerificationStage] = useState<'step1' | 'step2' | 'ready'>('step1');
   
   const platformName = platform === 'linebet_v1' ? 'Greenbet' : 'PariPulse';
   const platformImg = platform === 'linebet_v1' 
@@ -78,8 +83,25 @@ const SettingsView: React.FC<SettingsViewProps> = ({ onComplete, onBack, lang, t
     setErrors(newErrors);
 
     if (!newErrors.userId && !newErrors.userIdLength) {
-      onComplete(trimmedId);
+      // Start verification modal sequence
+      setIsModalOpen(true);
+      setVerificationStage('step1');
+
+      setTimeout(() => {
+        setVerificationStage('step2');
+      }, 1500);
+
+      setTimeout(() => {
+        setVerificationStage('ready');
+      }, 3000);
     }
+  };
+
+  const handleDownloadAndProceed = () => {
+    audioManager.playClick();
+    window.open(downloadUrl, '_blank');
+    setIsModalOpen(false);
+    onComplete(userId.trim());
   };
 
   const goToNextStep = () => {
@@ -538,6 +560,85 @@ const SettingsView: React.FC<SettingsViewProps> = ({ onComplete, onBack, lang, t
           </span>
         </div>
       </div>
+
+      {/* Verification Dialog Modal */}
+      <AnimatePresence>
+        {isModalOpen && (
+          <MotionDiv
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4"
+          >
+            <MotionDiv
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              transition={{ type: "spring", damping: 20, stiffness: 250 }}
+              className="w-full max-w-sm bg-zinc-900/90 border border-green-500/50 rounded-3xl p-6 sm:p-8 flex flex-col items-center text-center shadow-[0_0_40px_rgba(34,197,94,0.3)] relative overflow-hidden"
+            >
+              {/* Top ambient glow */}
+              <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-40 h-40 bg-green-500/20 blur-3xl rounded-full pointer-events-none" />
+
+              {verificationStage === 'step1' && (
+                <div className="flex flex-col items-center py-4">
+                  <div className="relative w-16 h-16 mb-5 flex items-center justify-center">
+                    <div className="absolute inset-0 rounded-full border-4 border-green-500/20 border-t-green-500 animate-spin" />
+                    <Fingerprint className="w-8 h-8 text-green-400" />
+                  </div>
+                  <h3 className="text-base sm:text-lg font-black text-white mb-2">
+                    جاري التحقق من ID الخاص بك...
+                  </h3>
+                  <p className="text-xs text-zinc-400 font-mono">
+                    ID: {userId}
+                  </p>
+                </div>
+              )}
+
+              {verificationStage === 'step2' && (
+                <div className="flex flex-col items-center py-4">
+                  <div className="relative w-16 h-16 mb-5 flex items-center justify-center">
+                    <div className="absolute inset-0 rounded-full border-4 border-green-500/20 border-t-green-500 animate-spin" />
+                    <ShieldCheck className="w-8 h-8 text-green-400" />
+                  </div>
+                  <h3 className="text-base sm:text-lg font-black text-white mb-2">
+                    جاري التحقق من حسابك...
+                  </h3>
+                  <p className="text-xs text-zinc-400">
+                    جاري مطابقة كود البروموكود B10 وحالة السيرفر
+                  </p>
+                </div>
+              )}
+
+              {verificationStage === 'ready' && (
+                <div className="flex flex-col items-center w-full py-2">
+                  <div className="w-16 h-16 rounded-2xl bg-green-500/20 border border-green-500/40 flex items-center justify-center mb-4 shadow-[0_0_20px_rgba(34,197,94,0.4)]">
+                    <CheckCircle2 className="w-9 h-9 text-green-400" />
+                  </div>
+
+                  <h3 className="text-lg sm:text-xl font-black text-white mb-2">
+                    تم التحقق من الحساب بنجاح!
+                  </h3>
+
+                  <p className="text-xs sm:text-sm text-zinc-300 font-bold mb-6">
+                    يرجى تحميل المنصة من هنا
+                  </p>
+
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.96 }}
+                    onClick={handleDownloadAndProceed}
+                    className="w-full py-4 px-6 bg-white hover:bg-zinc-100 text-black font-black text-sm uppercase tracking-wider rounded-2xl shadow-[0_0_25px_rgba(255,255,255,0.4)] flex items-center justify-center gap-2.5 transition-all cursor-pointer"
+                  >
+                    <Download className="w-5 h-5 text-black" />
+                    <span>تحميل الآن</span>
+                  </motion.button>
+                </div>
+              )}
+            </MotionDiv>
+          </MotionDiv>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
