@@ -55,7 +55,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({ onComplete, onBack, lang, t
 
   const handleCopy = () => {
     audioManager.playCopy();
-    navigator.clipboard.writeText("B10");
+    navigator.clipboard.writeText("B11");
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
