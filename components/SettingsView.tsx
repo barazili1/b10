@@ -43,13 +43,13 @@ const SettingsView: React.FC<SettingsViewProps> = ({ onComplete, onBack, lang, t
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [verificationStage, setVerificationStage] = useState<'step1' | 'step2' | 'ready'>('step1');
   
-  const platformName = platform === 'linebet_v1' ? 'Greenbet' : 'PariPulse';
+  const platformName = platform === 'linebet_v1' ? 'Greenbet' : 'Winwin';
   const platformImg = platform === 'linebet_v1' 
     ? 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRoEj5eP5tNE8iMZoLHE9i4q-JYLMiLmHaIMKatrmBePA&s=10'
-    : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQg6-yMiToAplqRqnBnaYACm49Od_26EabD95SDPxqLgg&s=10';
+    : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDBd0TpCQWUvWfxuU9DfJRgEs604mfmOEr0EHZOY0b9w&s=10';
 
   const greenbetDownloadUrl = "https://refpa79184.com/L?tag=d_5848868m_188307c_&site=5848868&ad=188307";
-  const xbetDownloadUrl = "https://pari-pulse.com/Mlstr-app";
+  const xbetDownloadUrl = "https://refpa49781.com/L?tag=d_5953406m_94904c_&site=5953406&ad=94904";
   const downloadUrl = platform === 'linebet_v1' ? greenbetDownloadUrl : xbetDownloadUrl;
   const telegramUrl = "https://t.me/+w3sTqpPkfwE0ZjM0";
 
@@ -137,7 +137,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({ onComplete, onBack, lang, t
       id: 2,
       number: "03",
       title: t.registration || "التسجيل بالبروموكود",
-      subtitle: "استخدام كود B10 الخصمي",
+      subtitle: "استخدام كود B11 الخصمي",
       icon: Lock
     },
     {
@@ -374,7 +374,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({ onComplete, onBack, lang, t
                     <div className="flex items-center justify-between">
                       <div>
                         <span className="text-xs text-zinc-400 font-black uppercase tracking-widest mb-1 block">كود البروموكود المعتمد</span>
-                        <span className="text-2xl sm:text-3xl font-black tracking-[0.2em] text-green-400">B10</span>
+                        <span className="text-2xl sm:text-3xl font-black tracking-[0.2em] text-green-400">B11</span>
                       </div>
                       <div className={`px-4 py-2 rounded-xl font-bold text-xs sm:text-sm flex items-center gap-2 transition-all ${
                         copied ? 'bg-green-500 text-black shadow-[0_0_15px_rgba(34,197,94,0.4)]' : 'bg-white/10 text-white group-hover:bg-green-500/20'
@@ -387,7 +387,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({ onComplete, onBack, lang, t
                         ) : (
                           <>
                             <Copy className="w-4 h-4" />
-                            <span>نسخ الكود (B10)</span>
+                            <span>نسخ الكود (B11)</span>
                           </>
                         )}
                       </div>
