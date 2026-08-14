@@ -39,8 +39,8 @@ const PlatformSelection: React.FC<PlatformSelectionProps> = ({ onSelect, t }) =>
     },
     {
       id: 'linebet_v2' as Platform,
-      name: 'PariPulse',
-      img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQg6-yMiToAplqRqnBnaYACm49Od_26EabD95SDPxqLgg&s=10',
+      name: 'Winwin',
+      img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDBd0TpCQWUvWfxuU9DfJRgEs604mfmOEr0EHZOY0b9w&s=10',
       tagline: 'عقدة استراتيجية: برافو',
       status: 'مؤكد',
       latency: '18ms',
